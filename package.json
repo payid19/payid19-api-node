@@ -1,0 +1,49 @@
+{
+  "name": "payid19-api-node",
+  "version": "1.0.0",
+  "description": "Payid19 API library for Node.js \u2014 accept USDT and cryptocurrency payments",
+  "keywords": [
+    "payid19",
+    "merchant",
+    "payment",
+    "gateway",
+    "bitcoin",
+    "usdt",
+    "tether",
+    "paymentgateway",
+    "crypto"
+  ],
+  "license": "MIT",
+  "homepage": "https://payid19.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/payid19/payid19-api-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/payid19/payid19-api-node/issues"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build && npm test",
+    "test": "npm run build && node --test \"test/*.test.js\""
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
+}
