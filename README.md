@@ -17,6 +17,13 @@ resolved promise always means the call succeeded.
 npm install payid19-api-node
 ```
 
+Not on npm yet? Until the first release is published, install straight from
+the repository — the package compiles itself on install:
+
+```bash
+npm install github:payid19/payid19-api-node
+```
+
 ## Getting Started
 
 1. Create an account at [payid19.com](https://payid19.com)
@@ -253,6 +260,17 @@ new Payid19(publicKey, privateKey, {
 
 - PHP — [payid19/payid19-api-php](https://github.com/payid19/payid19-api-php)
 - Plugins and wrappers — [payid19.com/dev/plugins/woocommerce_plugin](https://payid19.com/dev/plugins/woocommerce_plugin)
+
+## Development
+
+```bash
+npm install     # also compiles, via the prepare script
+npm test        # builds, then runs the test suite
+```
+
+`dist/` is generated and not committed. The `prepare` script builds it, which
+is what makes `npm install github:payid19/payid19-api-node` work and what
+compiles the package before `npm publish`.
 
 ## License
 

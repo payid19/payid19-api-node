@@ -39,8 +39,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build && npm test",
-    "test": "npm run build && node --test \"test/*.test.js\""
+    "prepare": "npm run build",
+    "test": "npm run build && node --test \"test/*.test.js\"",
+    "prepublishOnly": "npm test"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
