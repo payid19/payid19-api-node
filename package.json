@@ -40,7 +40,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "test": "npm run build && node --test \"test/*.test.js\"",
+    "test": "npm run build && node --test",
     "prepublishOnly": "npm test"
   },
   "devDependencies": {
