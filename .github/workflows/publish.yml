@@ -41,6 +41,40 @@ jobs:
             exit 1
           fi
 
-      - run: npm publish --provenance --access public
+      # Separates an unusable token from a token that authenticates but is not
+      # allowed to publish — the two produce very similar publish errors.
+      - name: Check the token authenticates
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if ! who="$(npm whoami 2>&1)"; then
+            echo "::error title=npm authentication failed::The NPM_TOKEN secret is missing, expired, or not a valid npm token. npm said: ${who}"
+            exit 1
+          fi
+          echo "Authenticated to npm as ${who}."
+
+      # npm's reason for refusing a publish is the one thing worth knowing when
+      # this fails, and a raw non-zero exit does not carry it, so it is
+      # promoted to an annotation that shows on the run summary.
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set +e
+          out="$(npm publish --provenance --access public 2>&1)"
+          code=$?
+          echo "$out"
+
+          if [ "$code" -ne 0 ]; then
+            reason="$(
+              printf '%s\n' "$out" \
+                | grep -iE '^npm (error|warn)' \
+                | grep -viE 'npm error (A complete log|command|argv|node v|npm v|cwd|code E?[0-9]+$)' \
+                | sed -E 's/(npm_[A-Za-z0-9_-]{8,})/[redacted]/g' \
+                | head -6 \
+                | tr '\n' '|'
+            )"
+            echo "::error title=npm publish failed::${reason:-no npm error line found; see the step log}"
+          fi
+
+          exit "$code"
