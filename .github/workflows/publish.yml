@@ -1,0 +1,46 @@
+name: Publish to npm
+
+# Publishing is driven by a GitHub Release, so a new version goes out from the
+# Releases page with no local tooling.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Lets npm attach a provenance attestation, so the npm page shows where
+      # and from which commit the tarball was built.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Check the release tag matches package.json
+        if: github.event_name == 'release'
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p 'require("./package.json").version')"
+          if [ "$tag" != "$pkg" ]; then
+            echo "Release tag ($tag) does not match package.json version ($pkg)." >&2
+            echo "Update the version in package.json, or retag the release." >&2
+            exit 1
+          fi
+
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
